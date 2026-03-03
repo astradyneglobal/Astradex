@@ -28,35 +28,27 @@ const Register = () => {
         if (!validate()) return;
 
         try {
-            // Mocking registration logic with localStorage
-            const existingUsers = JSON.parse(localStorage.getItem("astradex_users") || "[]");
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password, grade, school }),
+            });
 
-            if (existingUsers.find(u => u.email === email)) {
-                setServerError("User already exists with this email");
-                return;
+            const data = await response.json();
+
+            if (response.ok) {
+                // Small delay to simulate network
+                setTimeout(() => {
+                    navigate("/login");
+                }, 500);
+            } else {
+                setServerError(data.message || "Registration failed");
             }
-
-            const newUser = {
-                name,
-                email,
-                password,
-                grade,
-                school,
-                role: "student",
-                joiningDate: new Date().toLocaleDateString(),
-                department: "Science & Math"
-            };
-
-            existingUsers.push(newUser);
-            localStorage.setItem("astradex_users", JSON.stringify(existingUsers));
-
-            // Small delay to simulate network
-            setTimeout(() => {
-                navigate("/login");
-            }, 500);
-
         } catch (error) {
-            setServerError("Internal error occurred during registration");
+            console.error("Registration error:", error);
+            setServerError("Internal error occurred during registration. Please ensure backend is running.");
         }
     };
 

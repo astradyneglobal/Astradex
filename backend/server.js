@@ -35,7 +35,7 @@ function saveUsers(users) {
 // ADD THIS PART HERE
 
 // Existing routes
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
     const { name, email, password, grade, school, role } = req.body;
 
     let users = readUsers();
@@ -60,7 +60,7 @@ app.post("/register", (req, res) => {
     res.json({ message: "User registered successfully" });
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
 
     let users = readUsers();
@@ -76,6 +76,10 @@ app.post("/login", (req, res) => {
     res.json({ message: "Login successful", userId: user.id, name: user.name, email: user.email, grade: user.grade, school: user.school, role: user.role || "student", department: user.department, joiningDate: user.joiningDate });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

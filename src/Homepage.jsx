@@ -6,6 +6,17 @@ import iconLive from './assets/icon-live.svg';
 import iconProgress from './assets/icon-progress.svg';
 import iconSecure from './assets/icon-secure.svg';
 import avatarPlaceholder from './assets/avatar-placeholder.svg';
+import facultySaravana from './assets/faculty/saravana.png';
+import facultySakthivel from './assets/faculty/sakthivel.png';
+import facultyJahir from './assets/faculty/jahir.png';
+import facultyNaabirajan from './assets/faculty/naabirajan.png';
+import facultyLakshmi from './assets/faculty/lakshmi.png';
+import brochureSaravana from './assets/brochures/brochure_saravana.png';
+import brochureSakthivel from './assets/brochures/brochure_sakthivel.png';
+import brochureJahir from './assets/brochures/brochure_jahir.png';
+import brochureNaabirajan from './assets/brochures/brochure_naabirajan.png';
+import brochureLakshmi from './assets/brochures/brochure_lakshmi.png';
+import brochurePlaceholder from './assets/faculty_brochure_placeholder.png';
 import logoLight from './assets/logo-light.png';
 import logoDark from './assets/logo-dark.png';
 import { useTheme } from './context/ThemeContext';
@@ -159,7 +170,7 @@ const HeroSection = () => {
           <p className="badge-pill">Board Exam Prep • 11th &amp; 12th</p>
           <h1 className="heading-large">Master Your Exams Like a Pro</h1>
           <p className="paragraph-main">
-            Join 10,000+ students learning with live classes, exam-style practice and real-time progress tracking.
+            Over 6,000+ successful students have completed their journey with Astradex, powered by live interactive sessions, exam-oriented preparation and real-time progress tracking.
           </p>
           <div className="hero-actions">
             <button
@@ -395,7 +406,7 @@ const CoursesPreview = () => {
 
 const StatsSection = () => {
   const stats = [
-    { label: 'Active Students', value: 10000 },
+    { label: 'Passed Students', value: 6000 },
     { label: 'Expert Teachers', value: 50 },
     { label: 'Pass Rate', value: 98, suffix: '%' },
     { label: 'Practice Questions', value: 2000 }
@@ -435,53 +446,65 @@ const AboutSection = () => {
     >
       <h2 className="heading-medium">About Astradex</h2>
       <p className="paragraph-main">
-        Astradex is a startup committed to empowering students preparing
-        for their 10th, 11th, and 12th board exams. We deliver an engaging and
-        interactive online learning experience through expert instructors and
-        live classes.
+        Astradex is a dedicated academic learning platform focused on empowering students preparing for their 11th and 12th board examinations. We deliver a structured and engaging online learning experience through expert faculty, interactive live classes, weekly quizzes, monthly assessments, and real-time progress tracking. Every student is personally mentored by specialized subject experts, ensuring consistent academic growth, clarity in concepts, and complete exam readiness.
       </p>
     </section>
   );
 };
 
-const FacultySection = () => {
+const FacultySection = ({ onOpenModal }) => {
   const [ref, visible] = useScrollAnimation();
 
   const faculty = [
     {
-      name: 'Faculty Name 1',
-      qualification: 'M.Sc, B.Ed',
+      name: 'SARAVANA KUMAR K',
+      qualification: 'M.Sc. M.Ed., M.Phil.,PGDCA.,',
       board: 'CBSE',
       subject: 'Physics',
-      experience: '12 Years'
+      experience: '30 years',
+      image: facultySaravana,
+      brochure: brochureSaravana,
+      videoUrl: 'https://www.youtube.com/embed/5GPTap4ldyg?si=9rbUBxrlAqbb3dsV'
     },
     {
-      name: 'Faculty Name 2',
-      qualification: 'M.Sc, B.Ed',
+      name: 'SAKTHIVEL M',
+      qualification: 'M.Sc.,Mphil.,M.Ed.,',
+      board: 'TN Board',
+      subject: 'Physics',
+      experience: '16 years',
+      image: facultySakthivel,
+      brochure: brochureSakthivel,
+      videoUrl: 'https://www.youtube.com/embed/HQFmdI6gE2o?si=cniWUcIxmecR2yh5'
+    },
+    {
+      name: 'JAHIR HUSSAIN A',
+      qualification: 'M.Sc.,M.Ed.,',
       board: 'CBSE',
       subject: 'Chemistry',
-      experience: '10 Years'
+      experience: '19 years',
+      image: facultyJahir,
+      brochure: brochureJahir,
+      videoUrl: 'https://www.youtube.com/embed/Q18sE426qno?si=oIxokI_EW5R0d9Hk'
     },
     {
-      name: 'Faculty Name 3',
-      qualification: 'M.A, B.Ed',
+      name: 'NAABIRAJAN V E',
+      qualification: 'M.Sc.,B.Ed.,',
       board: 'CBSE',
-      subject: 'English',
-      experience: '9 Years'
+      subject: 'Biology',
+      experience: '33 years',
+      image: facultyNaabirajan,
+      brochure: brochureNaabirajan,
+      videoUrl: 'https://www.youtube.com/embed/5sCIAr6TmlY?si=FvseYQpaw3ZF23if'
     },
     {
-      name: 'Faculty Name 4',
-      qualification: 'M.Sc, B.Ed',
-      board: 'TN Board',
-      subject: 'Maths',
-      experience: '11 Years'
-    },
-    {
-      name: 'Faculty Name 5',
-      qualification: 'M.Sc, B.Ed',
+      name: 'LAKSHMI S',
+      qualification: 'M.Sc.,B.Ed.,',
       board: 'TN Board',
       subject: 'Biology',
-      experience: '8 Years'
+      experience: '33 years',
+      image: facultyLakshmi,
+      brochure: brochureLakshmi,
+      videoUrl: 'https://www.youtube.com/embed/Iiu6UpgPUSc?si=TAfCqRh5HWoNz5DB'
     }
   ];
 
@@ -497,9 +520,12 @@ const FacultySection = () => {
       </p>
       <div className="faculty-ticker-container">
         <div className="faculty-track">
-          {[...faculty, ...faculty, ...faculty].map(
-            ({ name, qualification, board, subject, experience }, index) => (
+          {[...faculty, ...faculty].map(
+            ({ name, qualification, board, subject, experience, image, videoUrl, brochure }, index) => (
               <article key={`${name}-${index}`} className="faculty-card">
+                <div className="faculty-image-wrapper">
+                  <img src={image} alt={name} className="faculty-image" />
+                </div>
                 <div className="faculty-card-body">
                   <h3 className="faculty-name">{name}</h3>
                   <p className="faculty-line">
@@ -515,7 +541,11 @@ const FacultySection = () => {
                     <span className="faculty-label">Experience:</span> {experience}
                   </p>
                 </div>
-                <button type="button" className="btn-secondary faculty-cta">
+                <button
+                  type="button"
+                  className="btn-secondary faculty-cta"
+                  onClick={() => onOpenModal({ name, qualification, board, subject, experience, image, videoUrl, brochure })}
+                >
                   Watch Intro
                 </button>
               </article>
@@ -673,7 +703,7 @@ const SignupCTA = () => {
           Ready to ace your board exams?
         </h2>
         <p className="signup-copy">
-          Join 10,000+ students and start learning with expert teachers today.
+          Join 6,000+ students who have successfully passed out with Astradex through expert mentoring, live classes, and structured exam-focused learning.
         </p>
         <button
           className="btn-primary"
@@ -690,21 +720,68 @@ const SignupCTA = () => {
   );
 };
 
-const Footer = () => (
+const Footer = ({ onOpenPrivacy, onOpenTerms }) => (
   <footer id="contact">
-    <p>&copy; 2025 Astradex. All rights reserved.</p>
+    <p>&copy; 2026 Astradex. All rights reserved.</p>
     <p>
-      <a href="#privacy">
+      <button
+        className="footer-link"
+        onClick={onOpenPrivacy}
+        type="button"
+      >
         Privacy Policy
-      </a>
-      <a href="#terms">
+      </button>
+      <button
+        className="footer-link"
+        onClick={onOpenTerms}
+        type="button"
+      >
         Terms of Service
-      </a>
+      </button>
     </p>
   </footer>
 );
 
+const LegalModal = ({ title, content, onClose }) => {
+  return (
+    <div className="legal-modal-overlay" onClick={onClose}>
+      <div className="legal-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="legal-modal-header">
+          <h2 className="legal-modal-title">{title}</h2>
+          <button className="legal-modal-close" onClick={onClose}>&times;</button>
+        </div>
+        <div className="legal-modal-body">
+          <div className="legal-text-container">
+            {content.split('\n\n').map((paragraph, idx) => (
+              <p key={idx} className="legal-paragraph">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+        <div className="legal-modal-footer">
+          <button className="btn-primary" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Homepage() {
+  const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [legalModal, setLegalModal] = useState(null); // 'privacy' | 'terms' | null
+
+  const openModal = (member) => {
+    setSelectedFaculty(member);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedFaculty(null);
+  };
+
   return (
     <>
       {/* Shared SVG Gradients */}
@@ -731,12 +808,146 @@ export default function Homepage() {
       <StatsSection />
       <FeaturesSection />
       <CoursesPreview />
-      <FacultySection />
+      <FacultySection onOpenModal={openModal} />
       <Testimonials />
       <AboutSection />
       <FAQSection />
       <SignupCTA />
-      <Footer />
+      <Footer
+        onOpenPrivacy={() => setLegalModal('privacy')}
+        onOpenTerms={() => setLegalModal('terms')}
+      />
+
+      {isModalOpen && selectedFaculty && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-spacer" />
+          <div className="modal-container">
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close" onClick={closeModal}>&times;</button>
+              <div className="modal-inner">
+                <div className="modal-left">
+                  <div className="modal-header">
+                    <div className="modal-faculty-img">
+                      <img src={selectedFaculty.image} alt={selectedFaculty.name} />
+                    </div>
+                    <div className="modal-title-group">
+                      <h3 className="modal-name">{selectedFaculty.name}</h3>
+                      <p className="modal-subtitle">{selectedFaculty.subject} Expert</p>
+                    </div>
+                  </div>
+
+                  <div className="modal-info-grid">
+                    <div className="info-item">
+                      <span className="info-label">Qualification</span>
+                      <span className="info-value">{selectedFaculty.qualification}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Experience</span>
+                      <span className="info-value">{selectedFaculty.experience}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">Board</span>
+                      <span className="info-value">{selectedFaculty.board}</span>
+                    </div>
+                  </div>
+
+                  <div className="modal-video-section">
+                    <h4 className="video-title">Introduction Video</h4>
+                    <div className="video-container">
+                      <iframe
+                        src={selectedFaculty.videoUrl}
+                        title={`${selectedFaculty.name} Introduction`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="modal-right">
+                  <div className="modal-brochure-section">
+                    <h4 className="brochure-title">Faculty Brochure</h4>
+                    <div className="brochure-container">
+                      <img
+                        src={selectedFaculty.brochure || brochurePlaceholder}
+                        alt="Faculty Brochure"
+                        className="brochure-img"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {legalModal === 'privacy' && (
+        <LegalModal
+          title="Privacy Policy"
+          content={`Effective Date: 01 April 2026
+
+AstraDex respects user privacy and is committed to protecting personal information.
+
+1. We collect basic information such as name, email, phone number, academic details, and payment information during registration.
+
+2. We collect academic performance data including quiz scores, test results, and progress tracking information to improve learning outcomes.
+
+3. Technical data such as IP address, browser type, and device information may be collected for analytics and platform improvement.
+
+4. Payment transactions are processed securely through authorized third-party payment gateways. AstraDex does not store full card details.
+
+5. Personal data is used strictly for providing services, communication, academic tracking, platform improvement, and important updates.
+
+6. We do not sell or rent personal information to third parties.
+
+7. Data may be shared with trusted service providers (such as payment processors or hosting services) only as necessary to operate the platform.
+
+8. We implement reasonable security measures to protect user data from unauthorized access or misuse.
+
+9. Users may request correction or deletion of their personal information by contacting official support.
+
+10.Promotional communications can be opted out of at any time.
+
+11. AstraDex may update this policy periodically, and continued use of the platform indicates acceptance of the revised policy.
+
+12. For privacy-related concerns, users may contact: [astradyne.global@gmail.com].`}
+          onClose={() => setLegalModal(null)}
+        />
+      )}
+
+      {legalModal === 'terms' && (
+        <LegalModal
+          title="Terms of Service"
+          content={`Effective Date: 01 April 2026
+
+By accessing or using AstraDex, you agree to comply with the following terms:
+
+1. AstraDex provides online academic services including live classes, recorded content, quizzes, monthly tests, mentoring, and progress tracking for students of 11th and 12th standards.
+
+2. Users must provide accurate registration details and are responsible for maintaining account confidentiality and all activity under their account.
+
+3. All course materials, videos, content, branding, designs, and intellectual property belong exclusively to AstraDex and may not be copied, recorded, distributed, resold, or reproduced without written permission.
+
+4. Subscription fees (monthly or yearly) must be paid in advance. Access to paid services is granted only after successful payment confirmation.
+
+5. AstraDex reserves the right to modify pricing, features, schedules, or platform structure at any time.
+
+6. Refund policies, if applicable, will be governed by the official refund terms stated separately on the website.
+
+7. Users must not misuse the platform, attempt unauthorized access, disrupt live classes, share login credentials, or engage in harmful or abusive behavior.
+
+8. AstraDex may suspend or terminate accounts that violate policies without prior notice.
+
+9. While AstraDex provides structured academic support, we do not guarantee specific examination results or ranks.
+
+10. The platform is provided on an “as available” basis, and AstraDex shall not be liable for indirect or consequential damages.
+
+11. These terms are governed by the laws of Tamil Nadu, India.`}
+          onClose={() => setLegalModal(null)}
+        />
+      )}
     </>
   );
 }

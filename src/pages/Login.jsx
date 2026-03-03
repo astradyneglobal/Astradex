@@ -22,39 +22,40 @@ const Login = () => {
         if (!validate()) return;
 
         try {
-            // Demo Accounts for testing
-            const demoAccounts = [
-                { email: "admin@astradex.com", password: "admin", name: "System Admin", role: "admin", department: "Central Admin", school: "Astradex HQ", joiningDate: "01/01/2024" },
-                { email: "staff@astradex.com", password: "staff", name: "Prof. S. Sharma", role: "staff", department: "Physics Dept", school: "Astradex School", joiningDate: "15/03/2024" }
-            ];
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-            const registeredUsers = JSON.parse(localStorage.getItem("astradex_users") || "[]");
-            const allUsers = [...demoAccounts, ...registeredUsers];
+            const data = await response.json();
 
-            const user = allUsers.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                localStorage.setItem("userName", user.name);
-                localStorage.setItem("userEmail", user.email);
-                localStorage.setItem("userGrade", user.grade || "N/A");
-                localStorage.setItem("userDepartment", user.department || "N/A");
-                localStorage.setItem("userJoiningDate", user.joiningDate || new Date().toLocaleDateString());
-                localStorage.setItem("userSchool", user.school || "N/A");
-                localStorage.setItem("role", user.role);
+            if (response.ok) {
+                // Store user data in localStorage on success
+                localStorage.setItem("userName", data.name);
+                localStorage.setItem("userEmail", data.email);
+                localStorage.setItem("userGrade", data.grade || "N/A");
+                localStorage.setItem("userDepartment", data.department || "N/A");
+                localStorage.setItem("userJoiningDate", data.joiningDate || new Date().toLocaleDateString());
+                localStorage.setItem("userSchool", data.school || "N/A");
+                localStorage.setItem("role", data.role);
                 localStorage.setItem("loggedIn", "true");
 
                 // Role-based navigation
                 setTimeout(() => {
-                    if (user.role === "admin") navigate("/dashboard/admin");
-                    else if (user.role === "staff") navigate("/dashboard/staff");
+                    if (data.role === "admin") navigate("/dashboard/admin");
+                    else if (data.role === "staff") navigate("/dashboard/staff");
                     else navigate("/dashboard/student");
                 }, 400);
 
             } else {
-                setServerError("Invalid email or password");
+                setServerError(data.message || "Invalid email or password");
             }
         } catch (error) {
-            setServerError("Internal error occurred during login");
+            console.error("Login error:", error);
+            setServerError("Internal error occurred during login. Please ensure backend is running.");
         }
     };
 
