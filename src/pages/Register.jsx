@@ -87,7 +87,7 @@ const Register = () => {
         setIsLoading(true);
         setServerError("");
         try {
-            const response = await fetch('http://localhost:5000/api/send-otp', {
+            const response = await fetch('/api/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -117,7 +117,7 @@ const Register = () => {
         setIsLoading(true);
         setServerError("");
         try {
-            const response = await fetch('http://localhost:5000/api/verify-otp', {
+            const response = await fetch('/api/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp }),
@@ -158,7 +158,7 @@ const Register = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:5000/api/register', {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, grade, school, mobile }),

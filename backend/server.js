@@ -15,7 +15,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-const USERS_FILE = path.join(__dirname, "user.json");
+const USERS_FILE = process.env.VERCEL 
+    ? path.join("/tmp", "user.json") 
+    : path.join(__dirname, "user.json");
 
 function readUsers() {
     if (!fs.existsSync(USERS_FILE)) {
