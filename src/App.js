@@ -10,6 +10,7 @@ import StaffDashboard from './pages/StaffDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 
 import './styles.css';
+import './dashboard-solid.css';
 
 function App() {
   return (

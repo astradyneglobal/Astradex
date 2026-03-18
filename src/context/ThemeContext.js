@@ -23,7 +23,8 @@ export const ThemeProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        // Apply theme attribute to body so CSS variables switch palettes
+        // Apply theme attribute to body and html so CSS variables switch palettes
+        document.documentElement.setAttribute('data-theme', theme);
         document.body.setAttribute('data-theme', theme);
         localStorage.setItem('site-theme', theme);
     }, [theme]);

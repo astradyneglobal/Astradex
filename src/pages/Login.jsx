@@ -1,33 +1,55 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get role from query parameter
+    const queryParams = new URLSearchParams(location.search);
+    const selectedRole = queryParams.get('role') || 'student';
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const [serverError, setServerError] = useState('');
 
+    const [showPassword, setShowPassword] = useState(false);
+
+    // SVG Icons
+    const EyeIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+    );
+    const EyeOffIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" /><line x1="1" y1="1" x2="23" y2="23" /></svg>
+    );
+
     const validate = () => {
         let errs = {};
-        if (!email) errs.email = "Email required";
+        if (!email) {
+            errs.email = "Email required";
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errs.email = "Incorrect mail format or mail format was wrong";
+            }
+        }
         if (!password) errs.password = "Password required";
         setErrors(errs);
         return Object.keys(errs).length === 0;
     };
-
     const handleLogin = async (e) => {
         e.preventDefault();
         setServerError('');
         if (!validate()) return;
 
         try {
-            const response = await fetch('/api/login', {
+            const response = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, role: selectedRole }),
             });
 
             const data = await response.json();
@@ -63,9 +85,9 @@ const Login = () => {
         <main className="auth-layout">
             <section className="auth-panel">
                 <div className="auth-card">
-                    <h2 className="auth-heading">Welcome back</h2>
+                    <h2 className="auth-heading">Welcome back, {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}</h2>
                     <p className="auth-subheading">
-                        Login to continue your board exam preparation with live classes and smart practice.
+                        Login to your {selectedRole} account to continue.
                     </p>
 
                     <form onSubmit={handleLogin} className="auth-form">
@@ -87,7 +109,7 @@ const Login = () => {
                         <div className="auth-field">
                             <label>Password</label>
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 className="auth-input"
                                 placeholder="••••••••"
                                 value={password}
@@ -95,6 +117,13 @@ const Login = () => {
                                 required
                                 style={errors.password ? { borderColor: '#ef4444' } : {}}
                             />
+                            <button
+                                type="button"
+                                className="password-toggle-btn"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                            </button>
                             {errors.password && <span style={{ color: '#ef4444', fontSize: '0.9rem' }}>{errors.password}</span>}
                         </div>
 
@@ -108,6 +137,25 @@ const Login = () => {
                             Login
                         </button>
                     </form>
+                    {selectedRole === 'student' && (
+                        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.95rem' }}>
+                            <span style={{ color: 'var(--text-muted)' }}>Don't have an account? </span>
+                            <button
+                                onClick={() => navigate('/register')}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'var(--brand-main)',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    padding: 0,
+                                    textDecoration: 'underline'
+                                }}
+                            >
+                                Register here
+                            </button>
+                        </div>
+                    )}
                 </div>
             </section>
 

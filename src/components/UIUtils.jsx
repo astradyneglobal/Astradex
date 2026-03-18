@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import brochurePlaceholder from '../assets/faculty_brochure_placeholder.png';
 import '../styles.css';
 
 export function SkeletonLoader({ width = '100%', height = 24, style = {}, className = '' }) {
@@ -44,4 +46,91 @@ export function AnimatedCounter({ value, duration = 1200, isVisible = true, clas
     return () => clearInterval(timer);
   }, [value, duration, isVisible]);
   return <span className={className} style={style}>{count}</span>;
+}
+
+export function FacultyModal({ faculty, onClose }) {
+  if (!faculty) return null;
+
+  return (
+    <motion.div 
+      className="modal-overlay" 
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="modal-spacer" />
+      <motion.div 
+        className="modal-container"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 50, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="modal-close" onClick={onClose}>&times;</button>
+          <div className="modal-inner">
+            <div className="modal-left">
+              <div className="modal-header">
+                <div className="modal-faculty-img">
+                  <img src={faculty.image} alt={faculty.name} />
+                </div>
+                <div className="modal-title-group">
+                  <h3 className="modal-name">{faculty.name}</h3>
+                  <p className="modal-subtitle">{faculty.subject} Mentor</p>
+                </div>
+              </div>
+
+              <div className="modal-info-grid">
+                <div className="info-item">
+                  <span className="info-label">Qualification</span>
+                  <span className="info-value">{faculty.qualification}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Experience</span>
+                  <span className="info-value">{faculty.experience}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Board</span>
+                  <span className="info-value">{faculty.board}</span>
+                </div>
+              </div>
+
+              <div className="modal-video-section">
+                <h4 className="video-title">Introduction Video</h4>
+                <div className="video-container">
+                  {faculty.videoUrl ? (
+                    <iframe
+                      src={faculty.videoUrl}
+                      title={`${faculty.name} Introduction`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <div style={{ padding: '2rem', textAlign: 'center', background: 'var(--bg-secondary)', borderRadius: '8px', color: 'var(--text-secondary)' }}>
+                      Video not available
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-right">
+              <div className="modal-brochure-section">
+                <h4 className="brochure-title">Faculty Brochure</h4>
+                <div className="brochure-container">
+                  <img
+                    src={faculty.brochure || brochurePlaceholder}
+                    alt="Faculty Brochure"
+                    className="brochure-img"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
 }

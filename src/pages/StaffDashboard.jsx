@@ -1,7 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { SkeletonLoader, EmptyState } from '../components/UIUtils';
+import DashboardLayout from '../components/DashboardLayout';
+import { User, ClipboardList, BookOpen, Users, Banknote, Calendar } from 'lucide-react';
 
 const StaffDashboard = () => {
     const [activeSection, setActiveSection] = useState('profile');
@@ -15,15 +17,17 @@ const StaffDashboard = () => {
             navigate("/login");
         }
     }, [navigate]);
+    
     const userName = localStorage.getItem("userName");
     const userEmail = localStorage.getItem("userEmail");
     const userDepartment = localStorage.getItem("userDepartment");
     const userJoiningDate = localStorage.getItem("userJoiningDate");
+    
     // Video Upload State
     const [videoUrl, setVideoUrl] = useState('');
     const [videoTitle, setVideoTitle] = useState('');
     const [uploadedVideos, setUploadedVideos] = useState([]);
-    const [loading, setLoading] = useState(false); // For future API
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const saved = localStorage.getItem('staff_uploaded_videos');
@@ -36,7 +40,6 @@ const StaffDashboard = () => {
         e.preventDefault();
         if (!videoUrl || !videoTitle) return;
 
-        // Extract video ID from URL (simple regex for youtube)
         const videoIdMatch = videoUrl.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&]+)/);
         const videoId = videoIdMatch ? videoIdMatch[1] : null;
 
@@ -60,106 +63,147 @@ const StaffDashboard = () => {
     };
 
     const navItems = [
-        { id: 'profile', label: 'Profile', icon: '👤' },
-        { id: 'attendance', label: 'Attendance', icon: '📝' },
-        { id: 'courses', label: 'Handling Courses', icon: '📚' },
-        { id: 'students', label: 'Students with Courses', icon: '👥' },
-        { id: 'salary', label: 'Salary Details', icon: '💰' },
-        { id: 'timetable', label: 'Timetable & Schedule', icon: '📅' },
+        { id: 'profile', label: 'Profile', icon: <User size={20} /> },
+        { id: 'attendance', label: 'Attendance', icon: <ClipboardList size={20} /> },
+        { id: 'courses', label: 'Handling Courses', icon: <BookOpen size={20} /> },
+        { id: 'students', label: 'Students with Courses', icon: <Users size={20} /> },
+        { id: 'salary', label: 'Salary Details', icon: <Banknote size={20} /> },
+        { id: 'timetable', label: 'Timetable & Schedule', icon: <Calendar size={20} /> },
     ];
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    };
 
     const renderContent = () => {
         switch (activeSection) {
             case 'profile':
                 return (
-                    <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>Staff Profile</h2>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '2rem' }}>
-                            <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'var(--brand-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', color: 'white' }}>
-                                K
+                    <motion.div variants={containerVariants} initial="hidden" animate="show">
+                        <motion.div variants={itemVariants} className="dash-hero-banner">
+                            <div className="dash-hero-content">
+                                <span className="dash-hero-badge">Staff ID: AST-402</span>
+                                <h2 className="dash-hero-title">Welcome back, {userName}!</h2>
+                                <p className="dash-hero-text">Here is what is happening with your Senior {userDepartment || 'Subject'} Faculty responsibilities today.</p>
+                                <button className="btn-primary" style={{ background: '#fff', color: 'var(--brand-main)', padding: '0.8rem 1.5rem', borderRadius: '8px' }}>View Schedule</button>
                             </div>
-                            <div>
-                                <h3 style={{ margin: 0, fontSize: '1.5rem' }}>{userName}</h3>
-                                <p style={{ margin: '0.5rem 0', color: 'var(--text-secondary)' }}>Senior Physics Faculty</p>
-                                <div className="badge" style={{ display: 'inline-block', padding: '0.2rem 0.8rem', background: 'var(--brand-glow)', color: 'var(--brand-main)', borderRadius: '1rem', fontSize: '0.8rem', fontWeight: 600 }}>Staff ID: AST-402</div>
+                            <div 
+                                style={{ position: 'absolute', right: '30px', top: '50%', transform: 'translateY(-50%)', flexShrink: 0, width: '130px', height: '130px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3.5rem', color: 'white', border: '1px solid rgba(255,255,255,0.4)' }}
+                            >
+                                {userName ? userName[0].toUpperCase() : 'S'}
                             </div>
-                        </div>
-                        <div style={{ display: 'grid', gap: '1rem' }}>
-                            <div className="meta-block">
-                                <strong>Email:</strong> {userEmail}
+                        </motion.div>
+                        
+                        <motion.div variants={itemVariants} className="dashboard-grid cols-3" style={{ marginTop: '2.5rem' }}>
+                            <div className="metric-card">
+                                <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>Email Address</span>
+                                <strong style={{ fontSize: '1.1rem', wordBreak: 'break-all' }}>{userEmail}</strong>
                             </div>
-                            <div className="meta-block">
-                                <strong>Department:</strong> {userDepartment}
+                            <div className="metric-card">
+                                <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>Department</span>
+                                <strong style={{ fontSize: '1.1rem' }}>{userDepartment || 'General'}</strong>
                             </div>
-                            <div className="meta-block">
-                                <strong>Joining Date:</strong> {userJoiningDate}
+                            <div className="metric-card">
+                                <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>Joining Date</span>
+                                <strong style={{ fontSize: '1.1rem' }}>{userJoiningDate || '2023-08-15'}</strong>
                             </div>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 );
 
             case 'attendance':
                 return (
-                    <div className="card">
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>My Attendance</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem', marginTop: '2rem' }}>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show" className="modern-card">
+                        <motion.div variants={itemVariants} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                            <h2 className="heading-medium" style={{ margin: 0, fontSize: '2rem' }}>My Attendance</h2>
+                            <div style={{ padding: '0.6rem 1.2rem', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', fontWeight: 600 }}>Total Present: <span style={{ color: '#22c55e' }}>26</span> / 30 Days</div>
+                        </motion.div>
+
+                        <motion.div variants={itemVariants} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '1rem' }}>
                             {[...Array(30)].map((_, i) => (
-                                <div key={i} style={{
-                                    aspectRatio: '1',
-                                    borderRadius: '8px',
-                                    background: i === 5 || i === 12 || i === 13 || i === 26 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    border: '1px solid var(--border-color)'
-                                }}>
-                                    <span style={{ fontWeight: 'bold' }}>{i + 1}</span>
-                                    <span style={{ fontSize: '0.7rem' }}>{i === 5 || i === 12 || i === 13 || i === 26 ? 'Absent' : 'Present'}</span>
-                                </div>
+                                <motion.div 
+                                    key={i} 
+                                    whileHover={{ backgroundColor: i === 5 || i === 12 || i === 13 || i === 26 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)' }}
+                                    style={{
+                                        aspectRatio: '1',
+                                        borderRadius: '12px',
+                                        background: i === 5 || i === 12 || i === 13 || i === 26 ? 'rgba(239, 68, 68, 0.08)' : 'rgba(34, 197, 94, 0.08)',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        border: `1px solid ${i === 5 || i === 12 || i === 13 || i === 26 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(34, 197, 94, 0.3)'}`,
+                                        cursor: 'pointer'
+                                    }}>
+                                    <span style={{ fontWeight: '800', fontSize: '1.2rem', color: 'var(--text-primary)' }}>{i + 1}</span>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 600, marginTop: '4px', color: i === 5 || i === 12 || i === 13 || i === 26 ? '#ef4444' : '#22c55e' }}>
+                                        {i === 5 || i === 12 || i === 13 || i === 26 ? 'Absent' : 'Present'}
+                                    </span>
+                                </motion.div>
                             ))}
-                        </div>
-                        <p style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 600 }}>Total Present: 26/30 Days</p>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 );
 
             case 'courses':
                 return (
-                    <div>
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>Course Management</h2>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show">
+                        <motion.h2 variants={itemVariants} className="heading-medium" style={{ textAlign: 'left', fontSize: '2rem', marginBottom: '2rem' }}>Handling Courses & Content</motion.h2>
 
-                        <div className="card" style={{ marginBottom: '2rem', background: 'var(--bg-secondary)', border: '1px dashed var(--brand-main)' }}>
-                            <h3 style={{ marginTop: 0 }}>Upload New Class Video</h3>
-                            <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Video Title (e.g., Physics Chapter 4 - Force)"
-                                    value={videoTitle}
-                                    onChange={(e) => setVideoTitle(e.target.value)}
-                                    style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}
-                                    required
-                                />
-                                <input
-                                    type="url"
-                                    placeholder="YouTube URL (e.g., https://youtu.be/...)"
-                                    value={videoUrl}
-                                    onChange={(e) => setVideoUrl(e.target.value)}
-                                    style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}
-                                    required
-                                />
-                                <button className="btn-primary" style={{ alignSelf: 'flex-start' }}>Upload Video Link</button>
+                        <motion.div variants={itemVariants} className="modern-card glass-panel" style={{ marginBottom: '3rem', border: '1px dashed var(--brand-main)' }}>
+                            <h3 style={{ marginTop: 0, fontSize: '1.3rem', marginBottom: '1.5rem' }}>Upload New Class Video</h3>
+                            <form onSubmit={handleUpload} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '1.5rem', alignItems: 'end' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Video Title</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g., Physics Chapter 4 - Force"
+                                        value={videoTitle}
+                                        onChange={(e) => setVideoTitle(e.target.value)}
+                                        style={{ width: '100%', padding: '0.9rem', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>YouTube URL</label>
+                                    <input
+                                        type="url"
+                                        placeholder="e.g., https://youtu.be/..."
+                                        value={videoUrl}
+                                        onChange={(e) => setVideoUrl(e.target.value)}
+                                        style={{ width: '100%', padding: '0.9rem', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                                        required
+                                    />
+                                </div>
+                                <button className="btn-primary" style={{ padding: '0.9rem 2rem', borderRadius: '12px', height: 'fit-content' }}>Upload Source</button>
                             </form>
-                        </div>
+                        </motion.div>
 
-                        <h3 className="course-title">Uploaded Content</h3>
-                        <div className="courses-grid" style={{ marginTop: '1rem' }}>
+                        <motion.h3 variants={itemVariants} className="course-title" style={{ fontSize: '1.4rem' }}>Uploaded Content Library</motion.h3>
+                        <motion.div variants={itemVariants} className="courses-grid" style={{ marginTop: '1.5rem', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))' }}>
                             {loading
-                                ? Array(2).fill(0).map((_, i) => <SkeletonLoader key={i} height={120} />)
+                                ? Array(2).fill(0).map((_, i) => <SkeletonLoader key={i} height={200} />)
                                 : uploadedVideos.length === 0
-                                    ? <EmptyState message="No videos uploaded yet." />
-                                    : uploadedVideos.map(video => (
-                                        <div key={video.id} className="card course-card">
-                                            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px', marginBottom: '1rem' }}>
+                                    ? <EmptyState message="No videos uploaded yet. Add your first resource above." />
+                                    : uploadedVideos.map((video, idx) => (
+                                        <motion.div 
+                                            key={video.id} 
+                                            className="modern-card" 
+                                            style={{ padding: '1.5rem' }}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: idx * 0.1 }}
+                                        >
+                                            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '12px', marginBottom: '1.5rem', background: '#000' }}>
                                                 <iframe
                                                     src={video.url}
                                                     style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
@@ -169,99 +213,130 @@ const StaffDashboard = () => {
                                                     allowFullScreen
                                                 ></iframe>
                                             </div>
-                                            <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.1rem' }}>{video.title}</h4>
-                                            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>Uploaded on: {video.date}</p>
-                                        </div>
+                                            <h4 style={{ margin: '0 0 0.5rem', fontSize: '1.15rem', color: 'var(--text-primary)' }}>{video.title}</h4>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                                                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0, fontWeight: 500 }}>{video.date}</p>
+                                                <button style={{ background: 'none', border: 'none', color: '#ef4444', fontWeight: 600, cursor: 'pointer', padding: '0.2rem' }}>Delete</button>
+                                            </div>
+                                        </motion.div>
                                     ))}
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 );
 
             case 'students':
                 return (
-                    <div className="card">
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>My Students</h2>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
-                            <thead>
-                                <tr style={{ borderBottom: '2px solid var(--border-color)', textAlign: 'left' }}>
-                                    <th style={{ padding: '1rem' }}>Student Name</th>
-                                    <th style={{ padding: '1rem' }}>Grade</th>
-                                    <th style={{ padding: '1rem' }}>Enrolled Course</th>
-                                    <th style={{ padding: '1rem' }}>Performance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[
-                                    { name: 'Ashwath', grade: '10', course: '10th Board Science', perf: 'A+' },
-                                    { name: 'Rahul', grade: '10', course: '10th Board Science', perf: 'B' },
-                                    { name: 'Simran', grade: '11', course: 'Physics Core', perf: 'A' },
-                                    { name: 'Dev', grade: '10', course: '10th Board Science', perf: 'B+' },
-                                ].map((s, i) => (
-                                    <tr key={i}>
-                                        <td style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>{s.name}</td>
-                                        <td style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>{s.grade}</td>
-                                        <td style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>{s.course}</td>
-                                        <td style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}><b>{s.perf}</b></td>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show" className="modern-card">
+                        <motion.h2 variants={itemVariants} className="heading-medium" style={{ textAlign: 'left', fontSize: '2rem', marginTop: 0, marginBottom: '2rem' }}>My Students Performance</motion.h2>
+                        
+                        <motion.div variants={itemVariants} style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 0.5rem' }}>
+                                <thead>
+                                    <tr style={{ textAlign: 'left', color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '1px' }}>
+                                        <th style={{ padding: '0 1rem 1rem' }}>Student Name</th>
+                                        <th style={{ padding: '0 1rem 1rem' }}>Grade Structure</th>
+                                        <th style={{ padding: '0 1rem 1rem' }}>Enrolled Module</th>
+                                        <th style={{ padding: '0 1rem 1rem', textAlign: 'center' }}>Avg Performance</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {[
+                                        { name: 'Ashwath', grade: '10th STD', course: '10th Board Science', perf: 'A+' },
+                                        { name: 'Rahul', grade: '10th STD', course: '10th Board Science', perf: 'B' },
+                                        { name: 'Simran', grade: '11th STD', course: 'Physics Core', perf: 'A' },
+                                        { name: 'Dev', grade: '10th STD', course: '10th Board Science', perf: 'B+' },
+                                    ].map((s, i) => (
+                                        <motion.tr 
+                                            key={i}
+                                            whileHover={{ backgroundColor: 'var(--bg-secondary)' }}
+                                            style={{ background: 'var(--bg-primary)', transition: 'background 0.2s', boxShadow: 'var(--shadow-soft)' }}    
+                                        >
+                                            <td style={{ padding: '1.2rem 1rem', borderRadius: '12px 0 0 12px', fontWeight: 600 }}>{s.name}</td>
+                                            <td style={{ padding: '1.2rem 1rem', color: 'var(--text-secondary)' }}>{s.grade}</td>
+                                            <td style={{ padding: '1.2rem 1rem', color: 'var(--text-secondary)' }}>{s.course}</td>
+                                            <td style={{ padding: '1.2rem 1rem', borderRadius: '0 12px 12px 0', textAlign: 'center' }}>
+                                                <span style={{ 
+                                                    padding: '0.4rem 1rem', 
+                                                    borderRadius: '8px', 
+                                                    fontWeight: 800,
+                                                    background: s.perf.includes('A') ? 'rgba(34, 197, 94, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+                                                    color: s.perf.includes('A') ? '#22c55e' : 'var(--brand-main)'
+                                                }}>{s.perf}</span>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </motion.div>
+                    </motion.div>
                 );
 
             case 'salary':
                 return (
-                    <div className="card">
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>Salary Details</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
-                            <div style={{ padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-soft)' }}>
-                                <h4 style={{ margin: 0, color: 'var(--brand-main)' }}>Total Earnings (YTD)</h4>
-                                <p style={{ fontSize: '2rem', fontWeight: 900, margin: '0.5rem 0', color: 'var(--brand-main)' }}>₹8,45,000</p>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show" className="modern-card">
+                        <motion.h2 variants={itemVariants} className="heading-medium" style={{ textAlign: 'left', fontSize: '2rem', marginTop: 0, marginBottom: '2rem' }}>Compensation Portal</motion.h2>
+                        
+                        <motion.div variants={itemVariants} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+                            <div className="glass-panel" style={{ padding: '2rem', border: '1px solid var(--brand-glow)' }}>
+                                <h4 style={{ margin: '0 0 0.5rem', color: 'var(--brand-main)', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.9rem' }}>Total Earnings (YTD)</h4>
+                                <p style={{ fontSize: '3rem', fontWeight: 900, margin: 0, color: 'var(--text-primary)' }}>₹8,45,000</p>
+                                <span style={{ color: '#22c55e', fontWeight: 600, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '1rem' }}>↑ 12% from last year</span>
                             </div>
-                            <div style={{ padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-soft)' }}>
-                                <h4 style={{ margin: 0, color: '#c026d3' }}>Last Month</h4>
-                                <p style={{ fontSize: '2rem', fontWeight: 900, margin: '0.5rem 0', color: '#c026d3' }}>₹75,000</p>
+                            <div className="glass-panel" style={{ padding: '2rem', border: '1px solid rgba(192, 38, 211, 0.3)' }}>
+                                <h4 style={{ margin: '0 0 0.5rem', color: '#c026d3', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.9rem' }}>Last Month Salary</h4>
+                                <p style={{ fontSize: '3rem', fontWeight: 900, margin: 0, color: 'var(--text-primary)' }}>₹75,000</p>
+                                <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '0.9rem', display: 'block', marginTop: '1rem' }}>Deposited on 1st Oct, 2025</span>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        <h4 style={{ marginTop: '2rem' }}>Payslips</h4>
-                        <ul className="highlight-list">
-                            <li><a href="#" style={{ color: 'var(--brand-main)' }}>Payslip_Oct_2025.pdf</a></li>
-                            <li><a href="#" style={{ color: 'var(--brand-main)' }}>Payslip_Sep_2025.pdf</a></li>
-                            <li><a href="#" style={{ color: 'var(--brand-main)' }}>Payslip_Aug_2025.pdf</a></li>
-                        </ul>
-                    </div>
+                        <motion.h4 variants={itemVariants} style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>Payslip Archives</motion.h4>
+                        <motion.div variants={itemVariants} style={{ display: 'grid', gap: '1rem' }}>
+                            {['October 2025', 'September 2025', 'August 2025'].map((month, i) => (
+                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 1.5rem', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                        <span style={{ fontSize: '1.5rem' }}>📄</span>
+                                        <span style={{ fontWeight: 600 }}>Payslip_{month.replace(' ', '_')}.pdf</span>
+                                    </div>
+                                    <button className="btn-secondary" style={{ padding: '0.5rem 1.2rem', borderRadius: '8px', fontSize: '0.9rem' }}>Download PDF</button>
+                                </div>
+                            ))}
+                        </motion.div>
+                    </motion.div>
                 );
 
             case 'timetable':
                 return (
-                    <div>
-                        <h2 className="heading-medium" style={{ textAlign: 'left', fontSize: '1.8rem' }}>Teaching Schedule</h2>
-                        <div className="card">
-                            <div style={{ display: 'grid', gridTemplateColumns: '100px repeat(5, 1fr)', gap: '1rem', overflowX: 'auto' }}>
-                                <div style={{ fontWeight: 600 }}>Time</div>
-                                <div style={{ fontWeight: 600 }}>Mon</div>
-                                <div style={{ fontWeight: 600 }}>Tue</div>
-                                <div style={{ fontWeight: 600 }}>Wed</div>
-                                <div style={{ fontWeight: 600 }}>Thu</div>
-                                <div style={{ fontWeight: 600 }}>Fri</div>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show">
+                        <motion.h2 variants={itemVariants} className="heading-medium" style={{ textAlign: 'left', fontSize: '2rem', marginBottom: '2rem' }}>Teaching Schedule</motion.h2>
+                        
+                        <motion.div variants={itemVariants} className="modern-card glass-panel" style={{ padding: '2rem 1rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(80px, 1fr) repeat(5, minmax(120px, 1.5fr))', gap: '1.5rem', overflowX: 'auto', minWidth: '700px' }}>
+                                {/* Header */}
+                                <div style={{ fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.85rem' }}>Time Phase</div>
+                                <div style={{ fontWeight: 700, textAlign: 'center', paddingBottom: '1rem', borderBottom: '2px solid var(--border-color)' }}>Mon</div>
+                                <div style={{ fontWeight: 700, textAlign: 'center', paddingBottom: '1rem', borderBottom: '2px solid var(--border-color)' }}>Tue</div>
+                                <div style={{ fontWeight: 700, textAlign: 'center', paddingBottom: '1rem', borderBottom: '2px solid var(--border-color)' }}>Wed</div>
+                                <div style={{ fontWeight: 700, textAlign: 'center', paddingBottom: '1rem', borderBottom: '2px solid var(--border-color)' }}>Thu</div>
+                                <div style={{ fontWeight: 700, textAlign: 'center', paddingBottom: '1rem', borderBottom: '2px solid var(--border-color)' }}>Fri</div>
 
-                                <div>10:00 AM</div>
-                                <div className="badge" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>10A Physics</div>
-                                <div>-</div>
-                                <div className="badge" style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>10B Physics</div>
-                                <div>-</div>
-                                <div>-</div>
+                                {/* Row 1 */}
+                                <div style={{ display: 'flex', alignItems: 'center', fontWeight: 600, color: 'var(--brand-main)' }}>10:00 AM</div>
+                                <div style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontWeight: 700, border: '1px solid rgba(34,197,94,0.2)' }}>10A Physics</div>
+                                <div style={{ background: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>-</div>
+                                <div style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontWeight: 700, border: '1px solid rgba(34,197,94,0.2)' }}>10B Physics</div>
+                                <div style={{ background: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>-</div>
+                                <div style={{ background: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>-</div>
 
-                                <div>4:00 PM</div>
-                                <div className="badge" style={{ background: 'var(--brand-glow)', color: 'var(--brand-main)' }}>12A Physics</div>
-                                <div>-</div>
-                                <div>-</div>
-                                <div className="badge" style={{ background: 'var(--brand-glow)', color: 'var(--brand-main)' }}>12A Doubt Live</div>
-                                <div className="badge" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>Meeting</div>
+                                {/* Row 2 */}
+                                <div style={{ display: 'flex', alignItems: 'center', fontWeight: 600, color: 'var(--brand-main)', marginTop: '1rem' }}>04:00 PM</div>
+                                <div style={{ background: 'var(--brand-glow)', color: 'var(--brand-main)', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontWeight: 700, border: '1px solid rgba(56, 189, 248, 0.2)', marginTop: '1rem' }}>12A Physics</div>
+                                <div style={{ background: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', marginTop: '1rem' }}>-</div>
+                                <div style={{ background: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)', marginTop: '1rem' }}>-</div>
+                                <div style={{ background: 'var(--brand-glow)', color: 'var(--brand-main)', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontWeight: 700, border: '1px solid rgba(56, 189, 248, 0.2)', marginTop: '1rem' }}>12A Doubt Live</div>
+                                <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '1rem', borderRadius: '12px', textAlign: 'center', fontWeight: 700, border: '1px solid rgba(239, 68, 68, 0.2)', marginTop: '1rem' }}>Staff Sync</div>
                             </div>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 );
 
             default:
@@ -270,41 +345,18 @@ const StaffDashboard = () => {
     };
 
     return (
-        <div className="dashboard-layout">
-            {/* Sidebar */}
-            <aside className="dashboard-sidebar">
-                <div className="dashboard-brand">
-                    Astradex
-                    <span>Staff Portal</span>
-                </div>
-                <nav className="dashboard-nav">
-                    <ul className="dashboard-nav-list">
-                        {navItems.map(item => (
-                            <li key={item.id} className="dashboard-nav-item">
-                                <button
-                                    onClick={() => setActiveSection(item.id)}
-                                    className={`dashboard-nav-button ${activeSection === item.id ? 'is-active' : ''}`}
-                                >
-                                    <span>{item.icon}</span>
-                                    <span>{item.label}</span>
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-                <button
-                    onClick={() => navigate('/login')}
-                    className="dashboard-logout"
-                >
-                    Logout
-                </button>
-            </aside>
-
-            {/* Main Content */}
-            <main className="dashboard-main" style={{ overflowY: 'auto', boxSizing: 'border-box' }}>
-                {renderContent()}
-            </main>
-        </div>
+        <DashboardLayout 
+            role="Staff"
+            navItems={navItems}
+            activeSection={activeSection}
+            onNavClick={setActiveSection}
+            onLogout={() => {
+                localStorage.removeItem("loggedIn");
+                localStorage.removeItem("role");
+            }}
+        >
+            {renderContent()}
+        </DashboardLayout>
     );
 };
 

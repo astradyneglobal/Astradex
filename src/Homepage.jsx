@@ -16,6 +16,8 @@ import brochureSakthivel from './assets/brochures/brochure_sakthivel.png';
 import brochureJahir from './assets/brochures/brochure_jahir.png';
 import brochureNaabirajan from './assets/brochures/brochure_naabirajan.png';
 import brochureLakshmi from './assets/brochures/brochure_lakshmi.png';
+import facultyGurunathan from './assets/faculty/gurunathan.jpg';
+import brochureGurunathan from './assets/brochures/brochure_gurunathan.png';
 import brochurePlaceholder from './assets/faculty_brochure_placeholder.png';
 import logoLight from './assets/logo-light.png';
 import logoDark from './assets/logo-dark.png';
@@ -51,6 +53,7 @@ function useScrollAnimation() {
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -67,7 +70,7 @@ const Navbar = () => {
       {/* Navigation Menu - Center */}
       <nav className={menuOpen ? 'nav-menu open' : 'nav-menu'}>
         <ul>
-          {['Home', 'Courses', 'About', 'Contact'].map(
+          {['Home', 'Courses', 'Faculty', 'About', 'Contact'].map(
             (link) => (
               <li key={link}>
                 {link === 'Courses' ? (
@@ -85,28 +88,93 @@ const Navbar = () => {
               </li>
             )
           )}
-          <li>
-            <Link
-              to="/register"
-              onClick={() => setMenuOpen(false)}
-            >
-              Register
-            </Link>
-          </li>
-
-          <li>
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-            >
-              Login
-            </Link>
-          </li>
         </ul>
       </nav>
 
-      {/* Controls (Toggle + Hamburger) - Right */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      {/* Controls (Toggle + Login + Hamburger) - Right */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
+            className="btn-secondary"
+            style={{
+              padding: '0 1rem',
+              borderRadius: '8px',
+              fontSize: 'var(--font-size-small)',
+              fontWeight: '600',
+              textDecoration: 'none',
+              border: '2px solid var(--border-color)',
+              background: 'transparent',
+              color: 'var(--text-main)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '34px',
+              cursor: 'pointer'
+            }}
+          >
+            Login
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ marginLeft: '4px', transform: loginDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          {loginDropdownOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 8px)',
+                right: 0,
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '12px',
+                boxShadow: 'var(--shadow-elevated)',
+                padding: '0.5rem',
+                minWidth: '140px',
+                zIndex: 1001,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px'
+              }}
+            >
+              {['Student', 'Staff', 'Admin'].map((role) => (
+                <button
+                  key={role}
+                  onClick={() => {
+                    setLoginDropdownOpen(false);
+                    navigate(`/login?role=${role.toLowerCase()}`);
+                  }}
+                  style={{
+                    padding: '0.6rem 1rem',
+                    textAlign: 'left',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = 'var(--bg-secondary)'}
+                  onMouseLeave={(e) => e.target.style.background = 'none'}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <button
           onClick={toggleTheme}
           className="btn-secondary"
@@ -319,6 +387,9 @@ const CoursesPreview = () => {
   return (
     <section id="courses" ref={ref} className={visible ? 'visible' : ''}>
       <h2 className="heading-medium">Featured Courses</h2>
+      <p className="section-subtitle" style={{ marginBottom: '2rem' }}>
+        Choose from our specialized board exam courses with flexible <b>Yearly</b> or <b>Monthly</b> payment plans.
+      </p>
       <div className={visible ? 'courses-grid visible' : 'courses-grid'}>
         {loading
           ? Array(3).fill(0).map((_, i) => <SkeletonLoader key={i} height={180} />)
@@ -385,6 +456,11 @@ const CoursesPreview = () => {
                     <h3 className="course-title">{course.name}</h3>
                   </div>
                   <p className="course-desc">{course.tagline}</p>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <span className="course-badge" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)', fontSize: '0.75rem' }}>
+                      Flexible Plans Available
+                    </span>
+                  </div>
                   <div className="card-link">Explore Course &rarr;</div>
                 </button>
               );
@@ -505,6 +581,16 @@ const FacultySection = ({ onOpenModal }) => {
       image: facultyLakshmi,
       brochure: brochureLakshmi,
       videoUrl: 'https://www.youtube.com/embed/Iiu6UpgPUSc?si=TAfCqRh5HWoNz5DB'
+    },
+    {
+      name: 'GURUNATHAN D',
+      qualification: 'M.Sc., B.Ed., PGDCA',
+      board: 'TN Board',
+      subject: 'Maths',
+      experience: '7 years',
+      image: facultyGurunathan,
+      brochure: brochureGurunathan,
+      videoUrl: 'https://www.youtube.com/embed/MuYq5pep3qo'
     }
   ];
 

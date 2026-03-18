@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCourseById } from '../data/courses';
 import { SkeletonLoader, EmptyState } from '../components/UIUtils';
+import { motion } from 'framer-motion';
 
 
 export default function CourseDetail() {
   const { courseId } = useParams();
   const [loading, setLoading] = useState(false); // For future API
+  const [planFilter, setPlanFilter] = useState('Yearly');
   const course = getCourseById(courseId);
 
   if (loading) {
@@ -29,9 +31,36 @@ export default function CourseDetail() {
           <h1 id="course-title" className="heading-medium" style={{ textTransform: 'none' }}>{course.name}</h1>
           <p className="paragraph-main" style={{ marginBottom: '1rem' }}>{course.tagline}</p>
           <p className="course-desc" style={{ marginBottom: '1.25rem' }}>{course.description}</p>
-          <div className="price-box">
-            <span className="price-value">{course.currency} {course.price}</span>
-            <span className="price-duration">/ full course</span>
+          <div className="catalog-filters-container" style={{ marginBottom: '1.5rem', justifyContent: 'flex-start' }}>
+            <div className="tab-group plan-tabs" role="tablist">
+              {['Yearly', 'Monthly'].map((plan) => (
+                <button
+                  key={plan}
+                  role="tab"
+                  aria-selected={planFilter === plan}
+                  className={`tab-item ${planFilter === plan ? 'is-active' : ''}`}
+                  onClick={() => setPlanFilter(plan)}
+                >
+                  <span style={{ position: 'relative', zIndex: 3 }}>{plan}</span>
+                  {planFilter === plan && (
+                    <motion.div
+                      layoutId="plan-indicator"
+                      className="tab-indicator"
+                      transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="price-box" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <div className="price-item">
+              <span className="price-value" style={{ fontSize: '1.6rem', color: 'var(--brand-main)', fontWeight: '700' }}>
+                {course.currency} {(planFilter === 'Monthly' ? course.monthlyPrice : course.yearlyPrice).toLocaleString()}
+                {planFilter === 'Monthly' && <small style={{ fontSize: '0.9rem', opacity: 0.8, marginLeft: '4px' }}>/monthly</small>}
+              </span>
+            </div>
           </div>
           <button
             className="btn-primary enroll-btn"
@@ -55,7 +84,7 @@ export default function CourseDetail() {
           <div className="meta-block">
             <h2 className="meta-heading">Highlights</h2>
             <ul className="highlight-list">
-              {course.highlights.map(h => <li key={h}>{h}</li>)}
+              {(planFilter === 'Monthly' ? course.monthlyHighlights : course.highlights).map(h => <li key={h}>{h}</li>)}
             </ul>
           </div>
           {course.tags && course.tags.length > 0 && (
@@ -109,16 +138,45 @@ export default function CourseDetail() {
       </section>
 
       <section className="instructors-section" aria-labelledby="instructors-heading">
-        <h2 id="instructors-heading" className="section-subheading">Instructors</h2>
+        <h2 id="instructors-heading" className="section-subheading">Our Experts</h2>
         <div className="instructors-grid">
           {course.instructors.map(inst => (
-            <div key={inst.id} className="instructor-card">
-              <div className="instructor-avatar" aria-hidden="true">{inst.name.charAt(0)}</div>
+            <div key={inst.id} className="instructor-card modern-card">
+              <div className="instructor-photo-container">
+                {inst.photo ? (
+                  <img src={inst.photo} alt={inst.name} className="instructor-photo" />
+                ) : (
+                  <div className="instructor-avatar-modern">{inst.name.charAt(0)}</div>
+                )}
+              </div>
               <div className="instructor-body">
                 <h3 className="instructor-name">{inst.name}</h3>
-                <p className="instructor-role">{inst.role}</p>
-                <p className="instructor-bio">{inst.bio}</p>
-                <p className="instructor-exp">Experience: {inst.experienceYears}+ yrs</p>
+                <div className="instructor-labels">
+                  <div className="label-item">
+                    <span className="label-tag">Qualification:</span>
+                    <span className="label-text">{inst.qualification}</span>
+                  </div>
+                  <div className="label-item">
+                    <span className="label-tag">Board:</span>
+                    <span className="label-text">{inst.boardInfo}</span>
+                  </div>
+                  <div className="label-item">
+                    <span className="label-tag">Subject:</span>
+                    <span className="label-text">{inst.subjectInfo}</span>
+                  </div>
+                  <div className="label-item">
+                    <span className="label-tag">Experience:</span>
+                    <span className="label-text">{inst.experienceYears} years</span>
+                  </div>
+                </div>
+                {inst.videoUrl && (
+                  <button 
+                    className="btn-watch-intro"
+                    onClick={() => window.open(inst.videoUrl, '_blank')}
+                  >
+                    <span className="play-icon">▶</span> Watch Intro
+                  </button>
+                )}
               </div>
             </div>
           ))}
