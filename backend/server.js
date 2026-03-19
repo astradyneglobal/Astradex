@@ -20,7 +20,20 @@ const USERS_FILE = process.env.VERCEL
     : path.join(__dirname, "user.json");
 
 function readUsers() {
-    if (!fs.existsSync(USERS_FILE)) {
+    if (process.env.VERCEL && !fs.existsSync(USERS_FILE)) {
+        const defaultUsersFile = path.join(__dirname, "user.json");
+        try {
+            if (fs.existsSync(defaultUsersFile)) {
+                const defaultData = fs.readFileSync(defaultUsersFile, "utf-8");
+                fs.writeFileSync(USERS_FILE, defaultData);
+            } else {
+                fs.writeFileSync(USERS_FILE, "[]");
+            }
+        } catch (err) {
+            console.error("Failed to seed USERS_FILE:", err);
+            fs.writeFileSync(USERS_FILE, "[]");
+        }
+    } else if (!fs.existsSync(USERS_FILE)) {
         fs.writeFileSync(USERS_FILE, "[]");
     }
 
