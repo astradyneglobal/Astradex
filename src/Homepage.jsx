@@ -2,10 +2,7 @@ import React, { useRef, useState } from 'react';
 import { AnimatedCounter, SkeletonLoader, EmptyState } from './components/UIUtils';
 import { useNavigate, Link } from 'react-router-dom';
 import heroIllustration from './assets/hero-illustration.svg';
-import iconLive from './assets/icon-live.svg';
-import iconProgress from './assets/icon-progress.svg';
-import iconSecure from './assets/icon-secure.svg';
-import avatarPlaceholder from './assets/avatar-placeholder.svg';
+
 import facultySaravana from './assets/faculty/saravana.png';
 import facultySakthivel from './assets/faculty/sakthivel.png';
 import facultyJahir from './assets/faculty/jahir.png';
@@ -37,13 +34,14 @@ function useScrollAnimation() {
       });
     }, { threshold: 0.1 });
 
-    if (domRef.current) {
-      observer.observe(domRef.current);
+    const currentRef = domRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (domRef.current) {
-        observer.unobserve(domRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
@@ -380,7 +378,7 @@ const FeaturesSection = () => {
 
 const CoursesPreview = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // For future API integration
+  const [loading] = useState(false); // For future API integration
   const [ref, visible] = useScrollAnimation();
   const featured = courses.slice(0, 3);
 

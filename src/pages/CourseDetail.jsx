@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 export default function CourseDetail() {
   const { courseId } = useParams();
-  const [loading, setLoading] = useState(false); // For future API
+  const [loading] = useState(false); // For future API
   const [planFilter, setPlanFilter] = useState('Yearly');
   const course = getCourseById(courseId);
 

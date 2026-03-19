@@ -27,7 +27,7 @@ const StaffDashboard = () => {
     const [videoUrl, setVideoUrl] = useState('');
     const [videoTitle, setVideoTitle] = useState('');
     const [uploadedVideos, setUploadedVideos] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
 
     useEffect(() => {
         const saved = localStorage.getItem('staff_uploaded_videos');

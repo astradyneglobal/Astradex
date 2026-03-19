@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EmptyState } from '../components/UIUtils';
 import DashboardLayout from '../components/DashboardLayout';
-import { Home, LineChart, BookOpen, CreditCard, Calendar, Award, TrendingUp, Clock, Target, AlertCircle, X, Check } from 'lucide-react';
+import { Home, LineChart, BookOpen, CreditCard, Calendar, Award, AlertCircle, X, TrendingUp, Clock, Target } from 'lucide-react';
 import { 
     LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
     RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
     BarChart, Bar, Cell
 } from 'recharts';
-import { FacultyModal } from '../components/UIUtils';
+import { FacultyModal, EmptyState } from '../components/UIUtils';
 import { courses } from '../data/courses';
 
 import facultySaravana from '../assets/faculty/saravana.png';
@@ -67,9 +66,7 @@ const StudentDashboard = () => {
         }
     }, [navigate]);
 
-    const userName = localStorage.getItem("userName") || "Student Name";
-    const userEmail = localStorage.getItem("userEmail") || "student@example.com";
-    const selectedCourse = localStorage.getItem("selectedCourse") || "10th Board Science";
+
 
     const navItems = [
         { id: 'profile', label: 'Overview', icon: <Home size={20} /> },
@@ -967,14 +964,7 @@ const StudentDashboard = () => {
                 );
 
             case 'fees':
-                const pendingData = [
-                    { name: '1', amount: 1000 },
-                    { name: '2', amount: 1500 },
-                    { name: '3', amount: 1200 },
-                    { name: '4', amount: 2000 },
-                    { name: '5', amount: 1800 },
-                    { name: '6', amount: 2500 },
-                ];
+
 
                 const paidData = [
                     { name: 'M1', amount: 4000 },
