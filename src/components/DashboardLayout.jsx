@@ -7,6 +7,8 @@ const DashboardLayout = ({ role, navItems, activeSection, onNavClick, onLogout, 
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+    const userName = localStorage.getItem("userName") || role;
+    const userInitial = userName.charAt(0).toUpperCase();
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -102,7 +104,7 @@ const DashboardLayout = ({ role, navItems, activeSection, onNavClick, onLogout, 
             <main className="dash-main">
                 <header className="dash-global-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem 0', background: 'transparent' }}>
                     <div className="global-greeting">
-                        <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 700 }}>Hello, {role}</h2>
+                        <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-primary)', fontWeight: 700 }}>Hello, {userName}</h2>
                         <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Welcome back to your dashboard</p>
                     </div>
                     <div className="global-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -116,7 +118,7 @@ const DashboardLayout = ({ role, navItems, activeSection, onNavClick, onLogout, 
                             <Bell size={20} />
                         </button>
                         <div className="profile-btn" style={{ width: '45px', height: '45px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--brand-main), #8b5cf6)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-                            {role.charAt(0)}
+                            {userInitial}
                         </div>
                     </div>
                 </header>
