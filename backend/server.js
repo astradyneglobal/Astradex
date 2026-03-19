@@ -19,11 +19,57 @@ const USERS_FILE = process.env.VERCEL
     ? path.join("/tmp", "user.json") 
     : path.join(__dirname, "user.json");
 
+const DEFAULT_USERS = [
+  {
+    "id": "admin1",
+    "name": "Akshay Kumar",
+    "email": "akshaykumar.sak6@gmail.com",
+    "password": "admin123",
+    "role": "admin"
+  },
+  {
+    "id": "staff1",
+    "name": "Dr.Kavita Rao",
+    "email": "kavitha.rao@astradex.com",
+    "department": "Science / Physics",
+    "joiningDate": "15 June 2023",
+    "password": "staffcredentials",
+    "role": "staff"
+  },
+  {
+    "id": "bc27d54d-1bae-445a-af14-cd72a4044f0f",
+    "name": "Achu",
+    "email": "achyutha42@gmail.com",
+    "password": "achyu",
+    "grade": "XII",
+    "school": "tvs",
+    "role": "student"
+  },
+  {
+    "id": "f4568c67-a7cf-4bf2-8556-c53f6a1263a8",
+    "name": "Kishore",
+    "email": "kishore@gmail.com",
+    "password": "kishore@02",
+    "grade": "XI",
+    "school": "tvs",
+    "role": "student"
+  },
+  {
+    "id": "8bbbe109-92e2-4a84-bcd4-a3c902ebfa72",
+    "name": "AKSHAY KUMAR S",
+    "email": "akshayanjana.dr@gmail.com",
+    "password": "Akshay*45264",
+    "grade": "XII",
+    "school": "Green Park",
+    "mobile": "9360176755",
+    "role": "student"
+  }
+];
+
 function readUsers() {
     if (process.env.VERCEL && !fs.existsSync(USERS_FILE)) {
         try {
-            const defaultUsers = require("./user.json");
-            fs.writeFileSync(USERS_FILE, JSON.stringify(defaultUsers, null, 2));
+            fs.writeFileSync(USERS_FILE, JSON.stringify(DEFAULT_USERS, null, 2));
         } catch (err) {
             console.error("Failed to seed USERS_FILE:", err);
             fs.writeFileSync(USERS_FILE, "[]");
