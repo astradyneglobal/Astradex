@@ -21,14 +21,9 @@ const USERS_FILE = process.env.VERCEL
 
 function readUsers() {
     if (process.env.VERCEL && !fs.existsSync(USERS_FILE)) {
-        const defaultUsersFile = path.join(__dirname, "user.json");
         try {
-            if (fs.existsSync(defaultUsersFile)) {
-                const defaultData = fs.readFileSync(defaultUsersFile, "utf-8");
-                fs.writeFileSync(USERS_FILE, defaultData);
-            } else {
-                fs.writeFileSync(USERS_FILE, "[]");
-            }
+            const defaultUsers = require("./user.json");
+            fs.writeFileSync(USERS_FILE, JSON.stringify(defaultUsers, null, 2));
         } catch (err) {
             console.error("Failed to seed USERS_FILE:", err);
             fs.writeFileSync(USERS_FILE, "[]");
@@ -60,39 +55,7 @@ app.get("/", (req, res) => {
     res.send("Backend running");
 });
 
-app.get("/api/debug-files", (req, res) => {
-    try {
-        const currentDir = __dirname;
-        const parentDir = path.join(__dirname, "..");
-        const filesInCurrent = fs.readdirSync(currentDir);
-        const filesInParent = fs.existsSync(parentDir) ? fs.readdirSync(parentDir) : ["N/A"];
-        
-        let forceResult = "none";
-        if (req.query.force === "true") {
-            const defaultUsersFile = path.join(__dirname, "user.json");
-            if (fs.existsSync(defaultUsersFile)) {
-                const defaultData = fs.readFileSync(defaultUsersFile, "utf-8");
-                fs.writeFileSync(USERS_FILE, defaultData);
-                forceResult = "Success: seeded from " + defaultUsersFile;
-            } else {
-                forceResult = "Error: defaultUsersFile not found at " + defaultUsersFile;
-            }
-        }
 
-        res.json({
-            currentDir,
-            parentDir,
-            filesInCurrent,
-            filesInParent,
-            USERS_FILE,
-            USERS_FILE_EXISTS: fs.existsSync(USERS_FILE),
-            USERS_FILE_SIZE: fs.existsSync(USERS_FILE) ? fs.statSync(USERS_FILE).size : 0,
-            forceResult
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 app.post("/api/send-otp", async (req, res) => {
     const { email } = req.body;
